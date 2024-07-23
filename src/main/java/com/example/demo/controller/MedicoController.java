@@ -1,0 +1,79 @@
+package com.example.demo.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.model.Medico;
+import com.example.demo.model.Paziente;
+import com.example.demo.repository.MedicoRepository;
+import com.example.demo.repository.PazienteRepository;
+
+@CrossOrigin
+@RestController
+@RequestMapping("/medici")
+public class MedicoController {
+	@Autowired
+	private MedicoRepository medicoRepository;
+
+	// stampa di tutti i medici
+	@GetMapping
+	public List<Medico> getAllMedici() {
+		return medicoRepository.findAll();
+	}
+
+	// ricerca di un medico per id
+	@GetMapping("/{id}")
+	public Medico getMedicoById(@PathVariable Long id) {
+		return medicoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("id non trovato"));
+	}
+	//ricerca di un medico per cognome
+	@GetMapping("/searchByCognome")
+	public Medico getMedicoByCognome(@RequestParam String cognome) {
+		return medicoRepository.findByCognome(cognome);
+	}
+	
+	//ricerca di un medico per specializzazione
+	@GetMapping("/searchBySpecializzazione")
+	public Medico getMedicoBySpecializzazione(@RequestParam String specializzazione) {
+		return medicoRepository.findBySpecializzazione(specializzazione);
+	}
+	
+
+	// creazione di un medico
+	@PostMapping
+	public Medico createMedico(@RequestBody Medico medico) {
+		return medicoRepository.save(medico);
+	}
+
+	// eliminazione di un medico
+	@DeleteMapping("/{id}")
+	public void deleteMedico(@PathVariable Long id) {
+		medicoRepository.deleteById(id);
+	}
+
+	// modifica di un medico
+	@PutMapping("/{id}")
+	public Medico updateMedico(@PathVariable Long id, @RequestBody Medico medicoDett) {
+		Medico medico = medicoRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("id non trovato"));
+		medico.setNome(medicoDett.getNome());
+		medico.setCognome(medicoDett.getCognome());
+		medico.setEmail(medicoDett.getEmail());
+		medico.setPassword(medicoDett.getPassword());
+		medico.setTelefono(medicoDett.getTelefono());
+		medico.setSpecializzazione(medicoDett.getSpecializzazione());
+		return medicoRepository.save(medico);
+	}
+}
