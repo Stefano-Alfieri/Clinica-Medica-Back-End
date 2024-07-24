@@ -1,9 +1,12 @@
 package com.example.demo.model;
 
+import java.util.Set;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Medico {
@@ -17,6 +20,20 @@ public class Medico {
 	private String email;
 	private String password;
 	private String telefono;
+	
+	@OneToMany(mappedBy = "medico")
+    private Set<Prenotazione> prenotazioni;
+	
+	@OneToMany(mappedBy ="medico")
+	private Set<DisponibilitaMedici> disponibilitàMedici;
+	
+	
+	public Set<Prenotazione> getPrenotazioni() {
+		return prenotazioni;
+	}
+	public void setPrenotazioni(Set<Prenotazione> prenotazioni) {
+		this.prenotazioni = prenotazioni;
+	}
 	public Long getId() {
 		return id;
 	}
@@ -47,9 +64,7 @@ public class Medico {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getPassword() {
-		return password;
-	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}

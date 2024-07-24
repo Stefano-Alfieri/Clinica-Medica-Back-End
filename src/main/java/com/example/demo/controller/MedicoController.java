@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+ package com.example.demo.controller;
 
 import java.util.List;
 
@@ -38,18 +38,36 @@ public class MedicoController {
 	public Medico getMedicoById(@PathVariable Long id) {
 		return medicoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("id non trovato"));
 	}
-	//ricerca di un medico per cognome
+
+	// ricerca di un medico per cognome
 	@GetMapping("/searchByCognome")
-	public Medico getMedicoByCognome(@RequestParam String cognome) {
+	public List<Medico> getMedicoByCognome(@RequestParam String cognome) {
 		return medicoRepository.findByCognome(cognome);
 	}
-	
-	//ricerca di un medico per specializzazione
+
+	// ricerca di un medico per nome e cognome
+	@GetMapping("/searchByNomeECognome")
+	public List<Medico> getMedicoByNomeCognome(@RequestParam String nome, @RequestParam String cognome) {
+		return medicoRepository.findByNomeAndCognome(nome, cognome);
+	}
+
+	// ricerca di un medico per email
+	@GetMapping("/searchByEmail")
+	public Medico getMedicoByEmail(@RequestParam String email) {
+		return medicoRepository.findByEmail(email);
+	}
+
+	// ricerca di un medico per telefono
+	@GetMapping("/searchByTelefono")
+	public Medico getMedicoByTelefono(@RequestParam String telefono) {
+		return medicoRepository.findByTelefono(telefono);
+	}
+
+	// ricerca di un medico per specializzazione
 	@GetMapping("/searchBySpecializzazione")
-	public Medico getMedicoBySpecializzazione(@RequestParam String specializzazione) {
+	public List<Medico> getMedicoBySpecializzazione(@RequestParam String specializzazione) {
 		return medicoRepository.findBySpecializzazione(specializzazione);
 	}
-	
 
 	// creazione di un medico
 	@PostMapping
@@ -71,7 +89,6 @@ public class MedicoController {
 		medico.setNome(medicoDett.getNome());
 		medico.setCognome(medicoDett.getCognome());
 		medico.setEmail(medicoDett.getEmail());
-		medico.setPassword(medicoDett.getPassword());
 		medico.setTelefono(medicoDett.getTelefono());
 		medico.setSpecializzazione(medicoDett.getSpecializzazione());
 		return medicoRepository.save(medico);

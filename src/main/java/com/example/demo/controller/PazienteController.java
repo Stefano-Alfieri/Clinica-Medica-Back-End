@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.exception.ResourceNotFoundException;
@@ -36,6 +37,30 @@ public class PazienteController {
 		return pazienteRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("id non trovato"));
 	}
 
+	// ricerca di un paziente per cognome
+	@GetMapping("/SearchByCognome")
+	public List<Paziente> getPazienteByCognome(@RequestParam String cognome) {
+		return pazienteRepository.findByCognome(cognome);
+	}
+
+	// ricerca di un paziente per nome e cognome
+	@GetMapping("/searchByNomeCognome")
+	public List<Paziente> getPazienteByNomeCognome(@RequestParam String nome, @RequestParam String cognome) {
+		return pazienteRepository.findByNomeAndCognome(nome, cognome);
+	}
+
+	// ricerca di un paziente per email
+	@GetMapping("/SearchByEmail")
+	public Paziente getPazienteByEmail(@RequestParam String email) {
+		return pazienteRepository.findByEmail(email);
+	}
+
+	// ricerca di un paziente per telefono
+	@GetMapping("/SearchByTelefono")
+	public Paziente getPazienteByTelefono(@RequestParam String telefono) {
+		return pazienteRepository.findByTelefono(telefono);
+	}
+
 	// creazione di un paziente
 	@PostMapping
 	public Paziente createPaziente(@RequestBody Paziente paziente) {
@@ -56,7 +81,6 @@ public class PazienteController {
 		paziente.setNome(pazienteDett.getNome());
 		paziente.setCognome(pazienteDett.getCognome());
 		paziente.setEmail(pazienteDett.getEmail());
-		paziente.setPassword(pazienteDett.getPassword());
 		paziente.setTelefono(pazienteDett.getTelefono());
 		return pazienteRepository.save(paziente);
 	}

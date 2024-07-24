@@ -14,6 +14,6 @@ public class Token {
 	private Long id;
 	
 	private String token;
-	private Long PazienteId;
+	private Long PersonaleClinicaId;
 	private Date createdDate;
 }
