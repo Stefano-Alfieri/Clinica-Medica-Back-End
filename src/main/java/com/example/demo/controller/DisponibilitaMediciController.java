@@ -7,11 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
+import com.example.demo.exception.OggettoGiaPresenteException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.DisponibilitaMedici;
 import com.example.demo.model.Medico;
@@ -88,6 +91,44 @@ public class DisponibilitaMediciController {
 		}
 	}
 
+	// ricerca disponibilita per id medico attive
+	@GetMapping("/searchDisponibilitaAttiveByMedicoId")
+	public List<DisponibilitaMedici> getAllActiveDisponibilitaMediciByMedicoId(@RequestParam Long medico_id) {
+		Medico medico = medicoRepository.findById(medico_id)
+				.orElseThrow(() -> new ResourceNotFoundException("id medico non trovato"));
+		List<DisponibilitaMedici> disponibilita = disponibilitaMediciRepository.findByMedico_Id(medico.getId());
+		if (!disponibilita.isEmpty()) {
+			List<DisponibilitaMedici> disponibilitaAtt = new ArrayList<>();
+			for (DisponibilitaMedici disp : disponibilita) {
+				if (disp.isStatus()) {
+					disponibilitaAtt.add(disp);
+				}
+			}
+			return disponibilitaAtt;
+		} else {
+			throw new ResourceNotFoundException("nessun medico disponibile con l'id passato");
+		}
+	}
+
+	// ricerca disponibilita per id medico non attive
+	@GetMapping("/searchDisponibilitaNonAttiveByMedicoId")
+	public List<DisponibilitaMedici> getAllNotActiveDisponibilitaMediciByMedicoId(@RequestParam Long medico_id) {
+		Medico medico = medicoRepository.findById(medico_id)
+				.orElseThrow(() -> new ResourceNotFoundException("id medico non trovato"));
+		List<DisponibilitaMedici> disponibilita = disponibilitaMediciRepository.findByMedico_Id(medico.getId());
+		if (!disponibilita.isEmpty()) {
+			List<DisponibilitaMedici> disponibilitaNonAtt = new ArrayList<>();
+			for (DisponibilitaMedici disp : disponibilita) {
+				if (!disp.isStatus()) {
+					disponibilitaNonAtt.add(disp);
+				}
+			}
+			return disponibilitaNonAtt;
+		} else {
+			throw new ResourceNotFoundException("nessun medico disponibile con l'id passato");
+		}
+	}
+
 	// ricerca disponibilita per email
 	@GetMapping("/searchDisponibilitaByMedicoEmail")
 	public List<DisponibilitaMedici> getAllDisponibilitaMediciByMedicoEmail(@RequestParam String email) {
@@ -129,4 +170,48 @@ public class DisponibilitaMediciController {
 		}
 	}
 
+	// crea disponibilità medico per id
+	@PostMapping
+	public DisponibilitaMedici createDisponibilitaByMedicoId(@RequestParam Long medico_id,
+			@RequestBody DisponibilitaMedici disponibilitaMedici) {
+		Medico medico = medicoRepository.findById(medico_id)
+				.orElseThrow(() -> new ResourceNotFoundException("id medico non trovato"));
+		List<DisponibilitaMedici> disponibilita = disponibilitaMediciRepository.findByMedico_Id(medico.getId());
+		if (disponibilita.isEmpty() || !disponibilita.contains(disponibilitaMedici)) {
+			return disponibilitaMediciRepository.save(disponibilitaMedici);
+		} else if (disponibilita.contains(disponibilitaMedici)) {
+			throw new OggettoGiaPresenteException("Orario già disponibile");
+		} else {
+			throw new ResourceNotFoundException("risorsa non trovata");
+		}
+	}
+
+	// modifica disponibilita medico
+	@PutMapping("/{id}")
+	public DisponibilitaMedici updateDisponibilitaMedici(@PathVariable Long id,
+			@RequestBody DisponibilitaMedici disponibilitaMediciDett) {
+		DisponibilitaMedici disponibilitaMedici = disponibilitaMediciRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Disponibilità non trovata"));
+		disponibilitaMedici.setDataDisp(disponibilitaMediciDett.getDataDisp());
+		disponibilitaMedici.setOraDisp(disponibilitaMediciDett.getOraDisp());
+		return disponibilitaMediciRepository.save(disponibilitaMedici);
+	}
+
+	// disattiva disponibilita
+	@PutMapping("/disattivaDisponibilita/{id}")
+	public DisponibilitaMedici disattivaDisponibilitaMedici(@PathVariable Long id) {
+		DisponibilitaMedici disponibilitaMedici = disponibilitaMediciRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Disponibilità non trovata"));
+		disponibilitaMedici.setStatus(false);
+		return disponibilitaMediciRepository.save(disponibilitaMedici);
+	}
+
+	// attiva disponibilita
+	@PutMapping("/attivaDisponibilita/{id}")
+	public DisponibilitaMedici attivaDisponibilitaMedici(@PathVariable Long id) {
+		DisponibilitaMedici disponibilitaMedici = disponibilitaMediciRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Disponibilità non trovata"));
+		disponibilitaMedici.setStatus(true);
+		return disponibilitaMediciRepository.save(disponibilitaMedici);
+	}
 }

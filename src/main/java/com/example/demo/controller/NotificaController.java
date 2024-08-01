@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,8 @@ import jakarta.transaction.Transactional;
 @RestController
 @RequestMapping("/notifiche")
 public class NotificaController {
+	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+	DateTimeFormatter formatterData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	@Autowired
 	private NotificaRepository notificaRepository;
@@ -92,6 +95,28 @@ public class NotificaController {
 						&& notifica.getOraMessaggio().equals(oraMessaggio))
 				.collect(Collectors.toList());
 		return notificheOraAndData;
+	}
+
+	// ricerca notifiche per data e id del paziente
+	@GetMapping("/searchNotificheByDataAndPazienteId")
+	public List<Notifica> getAllNotificheByDataAndPazienteId(@RequestParam Long paziente_id,
+			@RequestParam LocalDate createdDate) {
+		Paziente paziente = pazienteRepository.findById(paziente_id)
+				.orElseThrow(() -> new ResourceNotFoundException("id paziennte non trovato"));
+		List<Notifica> notificaUtente = notificaRepository.findByPaziente_id(paziente.getId());
+		List<Notifica> notificheData = notificaUtente.stream()
+				.filter(notifica -> notifica.getCreatedDate().equals(createdDate)).collect(Collectors.toList());
+		return notificheData;
+	}
+
+	// ricerca notifiche non lette per id pazietne
+	@GetMapping("/searchNotReadByPazienteId")
+	public List<Notifica> getAllNotificheNonLetteByPazienteId(@RequestParam Long paziente_id) {
+		Paziente paziente = pazienteRepository.findById(paziente_id)
+				.orElseThrow(() -> new ResourceNotFoundException("id paziennte non trovato"));
+		List<Notifica> notificaUtente = notificaRepository.findByPaziente_id(paziente.getId()).stream()
+				.filter(nonLette -> nonLette.isLetta() == false).collect(Collectors.toList());
+		return notificaUtente;
 	}
 
 }

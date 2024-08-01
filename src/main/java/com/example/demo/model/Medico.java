@@ -2,6 +2,8 @@ package com.example.demo.model;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,20 +22,18 @@ public class Medico {
 	private String email;
 	private String password;
 	private String telefono;
-	
-	@OneToMany(mappedBy = "medico")
-    private Set<Prenotazione> prenotazioni;
-	
+	@JsonIgnore
 	@OneToMany(mappedBy ="medico")
-	private Set<DisponibilitaMedici> disponibilitàMedici;
+	private Set<DisponibilitaMedici> disponibilitaMedici;
 	
 	
-	public Set<Prenotazione> getPrenotazioni() {
-		return prenotazioni;
+	public Set<DisponibilitaMedici> getDisponibilitaMedici() {
+		return disponibilitaMedici;
+	} 
+	public void setDisponibilitàMedici(Set<DisponibilitaMedici> disponibilitaMedici) {
+		this.disponibilitaMedici = disponibilitaMedici;
 	}
-	public void setPrenotazioni(Set<Prenotazione> prenotazioni) {
-		this.prenotazioni = prenotazioni;
-	}
+
 	public Long getId() {
 		return id;
 	}
