@@ -38,7 +38,7 @@ public class MedicoController {
 	public Medico getMedicoById(@PathVariable Long id) {
 		return medicoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("id non trovato"));
 	}
-
+ 
 	// ricerca di un medico per cognome
 	@GetMapping("/searchByCognome")
 	public List<Medico> getMedicoByCognome(@RequestParam String cognome) {
