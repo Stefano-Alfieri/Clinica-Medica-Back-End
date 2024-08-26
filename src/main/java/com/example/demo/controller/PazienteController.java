@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Paziente;
 import com.example.demo.repository.PazienteRepository;
+import com.example.demo.service.TokenService;
 
 @CrossOrigin
 @RestController
@@ -24,6 +25,8 @@ import com.example.demo.repository.PazienteRepository;
 public class PazienteController {
 	@Autowired
 	private PazienteRepository pazienteRepository;
+	@Autowired
+	private TokenService tokenService;
 
 	// stampa di tutti i pazienti
 	@GetMapping

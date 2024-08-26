@@ -19,6 +19,7 @@ import com.example.demo.model.Medico;
 import com.example.demo.model.Paziente;
 import com.example.demo.repository.MedicoRepository;
 import com.example.demo.repository.PazienteRepository;
+import com.example.demo.service.TokenService;
 
 @CrossOrigin
 @RestController
@@ -26,6 +27,8 @@ import com.example.demo.repository.PazienteRepository;
 public class MedicoController {
 	@Autowired
 	private MedicoRepository medicoRepository;
+	@Autowired
+	private TokenService tokenService;
 
 	// stampa di tutti i medici
 	@GetMapping

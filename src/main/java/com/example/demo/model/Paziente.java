@@ -83,4 +83,8 @@ public class Paziente {
 		this.telefono = telefono;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
 }

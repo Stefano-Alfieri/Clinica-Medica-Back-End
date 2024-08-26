@@ -8,4 +8,5 @@ import com.example.demo.model.PersonaleClinica;
 
 public interface PersonaleClinicaRepository extends JpaRepository<PersonaleClinica, Long> {
 	List<PersonaleClinica> findByRole(String role);
+	PersonaleClinica findByEmail(String email);
 }
