@@ -27,6 +27,8 @@ import com.example.demo.repository.PazienteRepository;
 import com.example.demo.repository.PrenotazioneRepository;
 import com.example.demo.service.TokenService;
 
+import jakarta.transaction.Transactional;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/prenotazioni")
@@ -182,7 +184,8 @@ public class PrenotazioneController {
 	}
 
 	// elimina prenotazioni non attive
-/*	@DeleteMapping("/deleteByNotActiveAppointments")
+	@Transactional
+	@DeleteMapping("/deleteByNotActiveAppointments")
 	public void deleteNotActivePrenotazioni(@RequestHeader("Authorization") String token) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
@@ -191,5 +194,5 @@ public class PrenotazioneController {
 			throw new UnauthorizedException();
 		}
 	}
-	*/
+	
 }
