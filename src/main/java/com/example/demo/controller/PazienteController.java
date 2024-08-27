@@ -10,12 +10,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.exception.UnauthorizedException;
 import com.example.demo.model.Paziente;
+import com.example.demo.model.Token;
 import com.example.demo.repository.PazienteRepository;
 import com.example.demo.service.TokenService;
 
@@ -30,62 +33,110 @@ public class PazienteController {
 
 	// stampa di tutti i pazienti
 	@GetMapping
-	public List<Paziente> getAllPazienti() {
-		return pazienteRepository.findAll();
+	public List<Paziente> getAllPazienti(@RequestHeader("Authorization") String token) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
+			return pazienteRepository.findAll();
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 
 	// ricerca di un paziente per id
 	@GetMapping("/{id}")
-	public Paziente getPazienteById(@PathVariable Long id) {
-		return pazienteRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("id non trovato"));
+	public Paziente getPazienteById(@RequestHeader("Authorization") String token, @PathVariable Long id) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
+			return pazienteRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("id non trovato"));
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 
 	// ricerca di un paziente per cognome
 	@GetMapping("/SearchByCognome")
-	public List<Paziente> getPazienteByCognome(@RequestParam String cognome) {
-		return pazienteRepository.findByCognome(cognome);
+	public List<Paziente> getPazienteByCognome(@RequestHeader("Authorization") String token,
+			@RequestParam String cognome) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
+			return pazienteRepository.findByCognome(cognome);
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 
 	// ricerca di un paziente per nome e cognome
 	@GetMapping("/searchByNomeCognome")
-	public List<Paziente> getPazienteByNomeCognome(@RequestParam String nome, @RequestParam String cognome) {
-		return pazienteRepository.findByNomeAndCognome(nome, cognome);
+	public List<Paziente> getPazienteByNomeCognome(@RequestHeader("Authorization") String token,
+			@RequestParam String nome, @RequestParam String cognome) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
+			return pazienteRepository.findByNomeAndCognome(nome, cognome);
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 
 	// ricerca di un paziente per email
 	@GetMapping("/SearchByEmail")
-	public Paziente getPazienteByEmail(@RequestParam String email) {
-		return pazienteRepository.findByEmail(email);
+	public Paziente getPazienteByEmail(@RequestHeader("Authorization") String token, @RequestParam String email) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
+			return pazienteRepository.findByEmail(email);
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 
 	// ricerca di un paziente per telefono
 	@GetMapping("/SearchByTelefono")
-	public Paziente getPazienteByTelefono(@RequestParam String telefono) {
-		return pazienteRepository.findByTelefono(telefono);
+	public Paziente getPazienteByTelefono(@RequestHeader("Authorization") String token, @RequestParam String telefono) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
+			return pazienteRepository.findByTelefono(telefono);
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 
 	// creazione di un paziente
 	@PostMapping
-	public Paziente createPaziente(@RequestBody Paziente paziente) {
-		return pazienteRepository.save(paziente);
+	public Paziente createPaziente(@RequestHeader("Authorization") String token, @RequestBody Paziente paziente) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null) {
+			return pazienteRepository.save(paziente);
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 
 	// eliminazione di un paziente
 	@DeleteMapping("/{id}")
-	public void deletePaziente(@PathVariable Long id) {
-		pazienteRepository.deleteById(id);
+	public void deletePaziente(@RequestHeader("Authorization") String token, @PathVariable Long id) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null) {
+			pazienteRepository.deleteById(id);
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 
 	// modifica di un paziente
 	@PutMapping("/{id}")
-	public Paziente updatePaziente(@PathVariable Long id, @RequestBody Paziente pazienteDett) {
-		Paziente paziente = pazienteRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("id non trovato"));
-		paziente.setNome(pazienteDett.getNome());
-		paziente.setCognome(pazienteDett.getCognome());
-		paziente.setEmail(pazienteDett.getEmail());
-		paziente.setTelefono(pazienteDett.getTelefono());
-		return pazienteRepository.save(paziente);
+	public Paziente updatePaziente(@RequestHeader("Authorization") String token, @PathVariable Long id,
+			@RequestBody Paziente pazienteDett) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null) {
+			Paziente paziente = pazienteRepository.findById(id)
+					.orElseThrow(() -> new ResourceNotFoundException("id non trovato"));
+			paziente.setNome(pazienteDett.getNome());
+			paziente.setCognome(pazienteDett.getCognome());
+			paziente.setEmail(pazienteDett.getEmail());
+			paziente.setTelefono(pazienteDett.getTelefono());
+			return pazienteRepository.save(paziente);
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 
 }

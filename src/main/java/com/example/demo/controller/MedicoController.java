@@ -1,4 +1,4 @@
- package com.example.demo.controller;
+package com.example.demo.controller;
 
 import java.util.List;
 
@@ -10,13 +10,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.exception.UnauthorizedException;
 import com.example.demo.model.Medico;
 import com.example.demo.model.Paziente;
+import com.example.demo.model.Token;
 import com.example.demo.repository.MedicoRepository;
 import com.example.demo.repository.PazienteRepository;
 import com.example.demo.service.TokenService;
@@ -41,7 +44,7 @@ public class MedicoController {
 	public Medico getMedicoById(@PathVariable Long id) {
 		return medicoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("id non trovato"));
 	}
- 
+
 	// ricerca di un medico per cognome
 	@GetMapping("/searchByCognome")
 	public List<Medico> getMedicoByCognome(@RequestParam String cognome) {
@@ -74,26 +77,43 @@ public class MedicoController {
 
 	// creazione di un medico
 	@PostMapping
-	public Medico createMedico(@RequestBody Medico medico) {
-		return medicoRepository.save(medico);
+	public Medico createMedico(@RequestHeader("Authorization") String token, @RequestBody Medico medico) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null && authToken.getRuolo().equals("admin")) {
+			return medicoRepository.save(medico);
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 
 	// eliminazione di un medico
 	@DeleteMapping("/{id}")
-	public void deleteMedico(@PathVariable Long id) {
-		medicoRepository.deleteById(id);
+	public void deleteMedico(@RequestHeader("Authorization") String token, @PathVariable Long id) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null && authToken.getRuolo().equals("admin")) {
+			medicoRepository.deleteById(id);
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 
 	// modifica di un medico
 	@PutMapping("/{id}")
-	public Medico updateMedico(@PathVariable Long id, @RequestBody Medico medicoDett) {
-		Medico medico = medicoRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("id non trovato"));
-		medico.setNome(medicoDett.getNome());
-		medico.setCognome(medicoDett.getCognome());
-		medico.setEmail(medicoDett.getEmail());
-		medico.setTelefono(medicoDett.getTelefono());
-		medico.setSpecializzazione(medicoDett.getSpecializzazione());
-		return medicoRepository.save(medico);
+	public Medico updateMedico(@RequestHeader("Authorization") String token, @PathVariable Long id,
+			@RequestBody Medico medicoDett) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
+			Medico medico = medicoRepository.findById(id)
+					.orElseThrow(() -> new ResourceNotFoundException("id non trovato"));
+			medico.setNome(medicoDett.getNome());
+			medico.setCognome(medicoDett.getCognome());
+			medico.setEmail(medicoDett.getEmail());
+			medico.setTelefono(medicoDett.getTelefono());
+			medico.setSpecializzazione(medicoDett.getSpecializzazione());
+			return medicoRepository.save(medico);
+
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 }

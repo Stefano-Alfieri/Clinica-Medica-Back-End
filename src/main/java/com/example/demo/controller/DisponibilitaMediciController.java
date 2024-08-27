@@ -10,16 +10,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.exception.OggettoGiaPresenteException;
 import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.exception.UnauthorizedException;
 import com.example.demo.model.DisponibilitaMedici;
 import com.example.demo.model.Medico;
+import com.example.demo.model.Token;
 import com.example.demo.repository.DisponibilitaMediciRepository;
 import com.example.demo.repository.MedicoRepository;
+import com.example.demo.service.TokenService;
 
 @CrossOrigin
 @RestController
@@ -31,6 +35,9 @@ public class DisponibilitaMediciController {
 
 	@Autowired
 	private MedicoRepository medicoRepository;
+
+	@Autowired
+	private TokenService tokenService;
 
 	// stampa di tutte le dispopnibilità
 	@GetMapping
@@ -172,46 +179,68 @@ public class DisponibilitaMediciController {
 
 	// crea disponibilità medico per id
 	@PostMapping
-	public DisponibilitaMedici createDisponibilitaByMedicoId(@RequestParam Long medico_id,
-			@RequestBody DisponibilitaMedici disponibilitaMedici) {
-		Medico medico = medicoRepository.findById(medico_id)
-				.orElseThrow(() -> new ResourceNotFoundException("id medico non trovato"));
-		List<DisponibilitaMedici> disponibilita = disponibilitaMediciRepository.findByMedico_Id(medico.getId());
-		if (disponibilita.isEmpty() || !disponibilita.contains(disponibilitaMedici)) {
-			return disponibilitaMediciRepository.save(disponibilitaMedici);
-		} else if (disponibilita.contains(disponibilitaMedici)) {
-			throw new OggettoGiaPresenteException("Orario già disponibile");
+	public DisponibilitaMedici createDisponibilitaByMedicoId(@RequestHeader("Authorization") String token,
+			@RequestParam Long medico_id, @RequestBody DisponibilitaMedici disponibilitaMedici) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
+			Medico medico = medicoRepository.findById(medico_id)
+					.orElseThrow(() -> new ResourceNotFoundException("id medico non trovato"));
+			List<DisponibilitaMedici> disponibilita = disponibilitaMediciRepository.findByMedico_Id(medico.getId());
+			if (disponibilita.isEmpty() || !disponibilita.contains(disponibilitaMedici)) {
+				return disponibilitaMediciRepository.save(disponibilitaMedici);
+			} else if (disponibilita.contains(disponibilitaMedici)) {
+				throw new OggettoGiaPresenteException("Orario già disponibile");
+			} else {
+				throw new ResourceNotFoundException("risorsa non trovata");
+			}
 		} else {
-			throw new ResourceNotFoundException("risorsa non trovata");
+			throw new UnauthorizedException();
 		}
 	}
 
 	// modifica disponibilita medico
 	@PutMapping("/{id}")
-	public DisponibilitaMedici updateDisponibilitaMedici(@PathVariable Long id,
-			@RequestBody DisponibilitaMedici disponibilitaMediciDett) {
-		DisponibilitaMedici disponibilitaMedici = disponibilitaMediciRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Disponibilità non trovata"));
-		disponibilitaMedici.setDataDisp(disponibilitaMediciDett.getDataDisp());
-		disponibilitaMedici.setOraDisp(disponibilitaMediciDett.getOraDisp());
-		return disponibilitaMediciRepository.save(disponibilitaMedici);
+	public DisponibilitaMedici updateDisponibilitaMedici(@RequestHeader("Authorization") String token,
+			@PathVariable Long id, @RequestBody DisponibilitaMedici disponibilitaMediciDett) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
+			DisponibilitaMedici disponibilitaMedici = disponibilitaMediciRepository.findById(id)
+					.orElseThrow(() -> new ResourceNotFoundException("Disponibilità non trovata"));
+			disponibilitaMedici.setDataDisp(disponibilitaMediciDett.getDataDisp());
+			disponibilitaMedici.setOraDisp(disponibilitaMediciDett.getOraDisp());
+			return disponibilitaMediciRepository.save(disponibilitaMedici);
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 
 	// disattiva disponibilita
 	@PutMapping("/disattivaDisponibilita/{id}")
-	public DisponibilitaMedici disattivaDisponibilitaMedici(@PathVariable Long id) {
-		DisponibilitaMedici disponibilitaMedici = disponibilitaMediciRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Disponibilità non trovata"));
-		disponibilitaMedici.setStatus(false);
-		return disponibilitaMediciRepository.save(disponibilitaMedici);
+	public DisponibilitaMedici disattivaDisponibilitaMedici(@RequestHeader("Authorization") String token,
+			@PathVariable Long id) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
+			DisponibilitaMedici disponibilitaMedici = disponibilitaMediciRepository.findById(id)
+					.orElseThrow(() -> new ResourceNotFoundException("Disponibilità non trovata"));
+			disponibilitaMedici.setStatus(false);
+			return disponibilitaMediciRepository.save(disponibilitaMedici);
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 
 	// attiva disponibilita
 	@PutMapping("/attivaDisponibilita/{id}")
-	public DisponibilitaMedici attivaDisponibilitaMedici(@PathVariable Long id) {
-		DisponibilitaMedici disponibilitaMedici = disponibilitaMediciRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Disponibilità non trovata"));
-		disponibilitaMedici.setStatus(true);
-		return disponibilitaMediciRepository.save(disponibilitaMedici);
+	public DisponibilitaMedici attivaDisponibilitaMedici(@RequestHeader("Authorization") String token,
+			@PathVariable Long id) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
+			DisponibilitaMedici disponibilitaMedici = disponibilitaMediciRepository.findById(id)
+					.orElseThrow(() -> new ResourceNotFoundException("Disponibilità non trovata"));
+			disponibilitaMedici.setStatus(true);
+			return disponibilitaMediciRepository.save(disponibilitaMedici);
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 }

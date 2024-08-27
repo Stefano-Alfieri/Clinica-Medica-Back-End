@@ -10,12 +10,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.exception.UnauthorizedException;
 import com.example.demo.model.PersonaleClinica;
+import com.example.demo.model.Token;
 import com.example.demo.repository.PersonaleClinicaRepository;
 import com.example.demo.service.TokenService;
 
@@ -38,46 +41,80 @@ public class PersonaleClinicaController {
 
 	// ricerca personale per id
 	@GetMapping("/{id}")
-	public PersonaleClinica getPersonaleClinicaById(@PathVariable Long id) {
-		return personaleClinicaRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("id non trovato"));
+	public PersonaleClinica getPersonaleClinicaById(@RequestHeader("Authorization") String token,
+			@PathVariable Long id) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null && authToken.getRuolo().equals("admin")) {
+			return personaleClinicaRepository.findById(id)
+					.orElseThrow(() -> new ResourceNotFoundException("id non trovato"));
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 
 	// ricerca personale per mail
 	@GetMapping("/searchByEmail")
-	public PersonaleClinica getPersonaleClinicaByEmail(@RequestParam String email) {
-		return personaleClinicaRepository.findByEmail(email);
+	public PersonaleClinica getPersonaleClinicaByEmail(@RequestHeader("Authorization") String token,
+			@RequestParam String email) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null && authToken.getRuolo().equals("admin")) {
+			return personaleClinicaRepository.findByEmail(email);
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 
 	// ricerca di personale per ruolo
 	@GetMapping("/searchByRole")
-	public List<PersonaleClinica> getPersonaleClinicaByRole(@RequestParam String role) {
-		return personaleClinicaRepository.findByRole(role);
+	public List<PersonaleClinica> getPersonaleClinicaByRole(@RequestHeader("Authorization") String token,
+			@RequestParam String role) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null && authToken.getRuolo().equals("admin")) {
+			return personaleClinicaRepository.findByRole(role);
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 
 	// creazione personale clinica
 	@PostMapping
-	public PersonaleClinica createPersonaleClinica(@RequestBody PersonaleClinica personaleClinica) {
-		return personaleClinicaRepository.save(personaleClinica);
+	public PersonaleClinica createPersonaleClinica(@RequestHeader("Authorization") String token,
+			@RequestBody PersonaleClinica personaleClinica) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null && authToken.getRuolo().equals("admin")) {
+			return personaleClinicaRepository.save(personaleClinica);
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 
 	// eliminazione personale clinica
 	@DeleteMapping("/{id}")
-	public void deletePersonaleClinica(@PathVariable Long id) {
-		personaleClinicaRepository.deleteById(id);
+	public void deletePersonaleClinica(@RequestHeader("Authorization") String token, @PathVariable Long id) {
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null && authToken.getRuolo().equals("admin")) {
+			personaleClinicaRepository.deleteById(id);
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 
 	// modifica personale clinica
 	@PutMapping("/{id}")
-	public PersonaleClinica updatePersonaleClinica(@PathVariable Long id,
+	public PersonaleClinica updatePersonaleClinica(@RequestHeader("Authorization") String token, @PathVariable Long id,
 			@RequestBody PersonaleClinica personaleClinicaDett) {
-		PersonaleClinica personaleClinica = personaleClinicaRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("id non trovato"));
-		personaleClinica.setNome(personaleClinicaDett.getNome());
-		personaleClinica.setCognome(personaleClinicaDett.getCognome());
-		personaleClinica.setEmail(personaleClinicaDett.getEmail());
-		personaleClinica.setRole(personaleClinicaDett.getRole());
-		return personaleClinicaRepository.save(personaleClinica);
+		Token authToken = tokenService.findByToken(token);
+		if (authToken != null && authToken.getRuolo().equals("admin")) {
+			PersonaleClinica personaleClinica = personaleClinicaRepository.findById(id)
+					.orElseThrow(() -> new ResourceNotFoundException("id non trovato"));
+			personaleClinica.setNome(personaleClinicaDett.getNome());
+			personaleClinica.setCognome(personaleClinicaDett.getCognome());
+			personaleClinica.setEmail(personaleClinicaDett.getEmail());
+			personaleClinica.setRole(personaleClinicaDett.getRole());
+			return personaleClinicaRepository.save(personaleClinica);
+		} else {
+			throw new UnauthorizedException();
+		}
 	}
 
 }

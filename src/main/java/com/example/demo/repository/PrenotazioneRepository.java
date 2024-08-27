@@ -13,6 +13,7 @@ import com.example.demo.model.Prenotazione;
 public interface PrenotazioneRepository extends JpaRepository<Prenotazione, Long> {
 	List<Prenotazione> findByActive(boolean active);
 	@Modifying
-	@Query("DELETE FROM Prenotazione p WHERE p.status = false")
+	@Query("DELETE FROM prenotazione p WHERE p.active = false")
 	void deleteByNotActive();
+	
 }
