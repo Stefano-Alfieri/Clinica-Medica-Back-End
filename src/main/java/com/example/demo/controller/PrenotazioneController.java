@@ -182,7 +182,7 @@ public class PrenotazioneController {
 	}
 
 	// elimina prenotazioni non attive
-	@DeleteMapping("/deleteByNotActiveAppointments")
+/*	@DeleteMapping("/deleteByNotActiveAppointments")
 	public void deleteNotActivePrenotazioni(@RequestHeader("Authorization") String token) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
@@ -191,5 +191,5 @@ public class PrenotazioneController {
 			throw new UnauthorizedException();
 		}
 	}
-	
+	*/
 }
