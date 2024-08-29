@@ -12,12 +12,17 @@ import com.example.demo.exception.UnauthorizedException;
 import com.example.demo.model.Medico;
 import com.example.demo.model.Paziente;
 import com.example.demo.model.PersonaleClinica;
+import com.example.demo.model.Token;
 import com.example.demo.repository.MedicoRepository;
 import com.example.demo.repository.PazienteRepository;
 import com.example.demo.repository.PersonaleClinicaRepository;
 import com.example.demo.request.AuthRequest;
 import com.example.demo.response.AuthResponse;
 import com.example.demo.service.TokenService;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @CrossOrigin
 @RestController
@@ -38,22 +43,21 @@ public class AuthController {
 	public AuthResponse login(@RequestBody AuthRequest authRequest) {
 		Paziente paziente = pazienteRepository.findByEmail(authRequest.getEmail());
 		if (paziente != null && paziente.getPassword().equals(authRequest.getPassword())) {
-			String token = tokenService.createTokenPaziente(paziente.getId()).getToken();
+			Token token = tokenService.createTokenPaziente(paziente.getId());
 			return new AuthResponse(token);
 		} else {
 			Medico medico = medicoRepository.findByEmail(authRequest.getEmail());
 			if (medico != null && medico.getPassword().equals(authRequest.getPassword())) {
-				String token = tokenService.createTokenMedico(medico.getId()).getToken();
+				Token token = tokenService.createTokenMedico(medico.getId());
 				return new AuthResponse(token);
 			} else {
 				PersonaleClinica personaleClinica = personaleClinicaRepository.findByEmail(authRequest.getEmail());
 				if (personaleClinica != null && personaleClinica.getPassword().equals(authRequest.getPassword())) {
-					String token = tokenService.createTokenPersonaleClinica(personaleClinica.getId()).getToken();
+					Token token = tokenService.createTokenPersonaleClinica(personaleClinica.getId());
 					return new AuthResponse(token);
 
 				} else {
 					throw new UnauthorizedException();
-
 				}
 			}
 		}
@@ -64,4 +68,9 @@ public class AuthController {
 		tokenService.deleteByToken(token);
 	}
 
+	/*@GetMapping("/SearchRuoloByToken")
+	public String getRuolo(@RequestParam String token) {
+		return tokenService.getRuoloByToken(token);
+	}
+*/	
 }

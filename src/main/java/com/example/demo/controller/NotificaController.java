@@ -47,7 +47,7 @@ public class NotificaController {
 
 	// stampa di tutte le notifiche
 	@GetMapping
-	public List<Notifica> getAllNotifiche(@RequestHeader("Authorization") String token) {
+	public List<Notifica> getAllNotifiche(@RequestHeader("Authorization") Token token) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
 			return notificaRepository.findAll();
@@ -58,7 +58,7 @@ public class NotificaController {
 
 	// ricerca notifica per id
 	@GetMapping("/{id}")
-	public Notifica getNotificaById(@RequestHeader("Authorization") String token, @PathVariable Long id) {
+	public Notifica getNotificaById(@RequestHeader("Authorization") Token token, @PathVariable Long id) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
 			return notificaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("id non trovato"));
@@ -69,7 +69,7 @@ public class NotificaController {
 
 	// ricerca notifica per Data
 	@GetMapping("/searchByData")
-	public List<Notifica> getNotificaByData(@RequestHeader("Authorization") String token,
+	public List<Notifica> getNotificaByData(@RequestHeader("Authorization") Token token,
 			@RequestParam LocalDate createdDate) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
@@ -81,7 +81,7 @@ public class NotificaController {
 
 	// ricerca notifica per Orario
 	@GetMapping("/searchByOrario")
-	public List<Notifica> getNotificaByOrario(@RequestHeader("Authorization") String token,
+	public List<Notifica> getNotificaByOrario(@RequestHeader("Authorization") Token token,
 			@RequestParam LocalTime oraMessaggio) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
@@ -93,7 +93,7 @@ public class NotificaController {
 
 	// crea notifica
 	@PostMapping
-	public Notifica createNotifica(@RequestHeader("Authorization") String token, @RequestBody Notifica notifica) {
+	public Notifica createNotifica(@RequestHeader("Authorization") Token token, @RequestBody Notifica notifica) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
 			return notificaRepository.save(notifica);
@@ -104,7 +104,7 @@ public class NotificaController {
 
 	// eliminazione notifica
 	@DeleteMapping("/{id}")
-	public void deleteNotifica(@RequestHeader("Authorization") String token, @PathVariable Long id) {
+	public void deleteNotifica(@RequestHeader("Authorization") Token token, @PathVariable Long id) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
 			notificaRepository.deleteById(id);
@@ -116,7 +116,7 @@ public class NotificaController {
 	// eliminazione notifica letta per id del paziente
 	@Transactional
 	@DeleteMapping("/deleteNotificheLetteByPazienteId")
-	public void deleteNotificheLetteByPazienteId(@RequestHeader("Authorization") String token,
+	public void deleteNotificheLetteByPazienteId(@RequestHeader("Authorization") Token token,
 			@RequestParam Long paziente_id) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
@@ -130,7 +130,7 @@ public class NotificaController {
 
 	// ricerca notifiche per orario , data e id del paziente
 	@GetMapping("/searchNotificheByDataOrarioAndPazienteId")
-	public List<Notifica> getAllNotificheByDataAndOrarioAndPazienteId(@RequestHeader("Authorization") String token,
+	public List<Notifica> getAllNotificheByDataAndOrarioAndPazienteId(@RequestHeader("Authorization") Token token,
 			@RequestParam Long paziente_id, @RequestParam LocalTime oraMessaggio, @RequestParam LocalDate createdDate) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
@@ -149,7 +149,7 @@ public class NotificaController {
 
 	// ricerca notifiche per data e id del paziente
 	@GetMapping("/searchNotificheByDataAndPazienteId")
-	public List<Notifica> getAllNotificheByDataAndPazienteId(@RequestHeader("Authorization") String token,
+	public List<Notifica> getAllNotificheByDataAndPazienteId(@RequestHeader("Authorization") Token token,
 			@RequestParam Long paziente_id, @RequestParam LocalDate createdDate) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
@@ -166,7 +166,7 @@ public class NotificaController {
 
 	// ricerca notifiche non lette per id pazietne
 	@GetMapping("/searchNotReadByPazienteId")
-	public List<Notifica> getAllNotificheNonLetteByPazienteId(@RequestHeader("Authorization") String token,
+	public List<Notifica> getAllNotificheNonLetteByPazienteId(@RequestHeader("Authorization") Token token,
 			@RequestParam Long paziente_id) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {

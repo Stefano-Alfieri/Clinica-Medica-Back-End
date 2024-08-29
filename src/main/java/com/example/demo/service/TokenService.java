@@ -48,11 +48,16 @@ public class TokenService {
 		return java.util.UUID.randomUUID().toString();
 	}
 
-	public Token findByToken(String token) {
+	public Token findByToken(Token token) {
 		return tokenRepository.findByToken(token);
 	}
 
 	public void deleteByToken(String token) {
 		tokenRepository.deleteByToken(token);
 	}
+	
+/*	public String getRuoloByToken(String token) {
+		return tokenRepository.findRuoloByToken(token).get(0);
+	}
+	*/
 }

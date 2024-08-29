@@ -33,7 +33,7 @@ public class PazienteController {
 
 	// stampa di tutti i pazienti
 	@GetMapping
-	public List<Paziente> getAllPazienti(@RequestHeader("Authorization") String token) {
+	public List<Paziente> getAllPazienti(@RequestHeader("Authorization") Token token) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
 			return pazienteRepository.findAll();
@@ -44,7 +44,7 @@ public class PazienteController {
 
 	// ricerca di un paziente per id
 	@GetMapping("/{id}")
-	public Paziente getPazienteById(@RequestHeader("Authorization") String token, @PathVariable Long id) {
+	public Paziente getPazienteById(@RequestHeader("Authorization") Token token, @PathVariable Long id) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
 			return pazienteRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("id non trovato"));
@@ -55,7 +55,7 @@ public class PazienteController {
 
 	// ricerca di un paziente per cognome
 	@GetMapping("/SearchByCognome")
-	public List<Paziente> getPazienteByCognome(@RequestHeader("Authorization") String token,
+	public List<Paziente> getPazienteByCognome(@RequestHeader("Authorization") Token token,
 			@RequestParam String cognome) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
@@ -67,7 +67,7 @@ public class PazienteController {
 
 	// ricerca di un paziente per nome e cognome
 	@GetMapping("/searchByNomeCognome")
-	public List<Paziente> getPazienteByNomeCognome(@RequestHeader("Authorization") String token,
+	public List<Paziente> getPazienteByNomeCognome(@RequestHeader("Authorization") Token token,
 			@RequestParam String nome, @RequestParam String cognome) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
@@ -79,7 +79,7 @@ public class PazienteController {
 
 	// ricerca di un paziente per email
 	@GetMapping("/SearchByEmail")
-	public Paziente getPazienteByEmail(@RequestHeader("Authorization") String token, @RequestParam String email) {
+	public Paziente getPazienteByEmail(@RequestHeader("Authorization") Token token, @RequestParam String email) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
 			return pazienteRepository.findByEmail(email);
@@ -90,7 +90,7 @@ public class PazienteController {
 
 	// ricerca di un paziente per telefono
 	@GetMapping("/SearchByTelefono")
-	public Paziente getPazienteByTelefono(@RequestHeader("Authorization") String token, @RequestParam String telefono) {
+	public Paziente getPazienteByTelefono(@RequestHeader("Authorization") Token token, @RequestParam String telefono) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
 			return pazienteRepository.findByTelefono(telefono);
@@ -101,7 +101,7 @@ public class PazienteController {
 
 	// creazione di un paziente
 	@PostMapping
-	public Paziente createPaziente(@RequestHeader("Authorization") String token, @RequestBody Paziente paziente) {
+	public Paziente createPaziente(@RequestHeader("Authorization") Token token, @RequestBody Paziente paziente) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
 			return pazienteRepository.save(paziente);
@@ -112,7 +112,7 @@ public class PazienteController {
 
 	// eliminazione di un paziente
 	@DeleteMapping("/{id}")
-	public void deletePaziente(@RequestHeader("Authorization") String token, @PathVariable Long id) {
+	public void deletePaziente(@RequestHeader("Authorization") Token token, @PathVariable Long id) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
 			pazienteRepository.deleteById(id);
@@ -123,7 +123,7 @@ public class PazienteController {
 
 	// modifica di un paziente
 	@PutMapping("/{id}")
-	public Paziente updatePaziente(@RequestHeader("Authorization") String token, @PathVariable Long id,
+	public Paziente updatePaziente(@RequestHeader("Authorization") Token token, @PathVariable Long id,
 			@RequestBody Paziente pazienteDett) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {

@@ -1,19 +1,21 @@
 package com.example.demo.response;
 
+import com.example.demo.model.Token;
+
 public class AuthResponse {
 
-	private String token;
+	private Token token;
 
-	public AuthResponse(String token) {
+	public AuthResponse(Token token) {
 		this.token = token;
 	}
 
 
-	public String getToken() {
+	public Token getToken() {
 		return token;
 	}
 
-	public void setToken(String token) {
+	public void setToken(Token token) {
 		this.token = token;
 	}
 

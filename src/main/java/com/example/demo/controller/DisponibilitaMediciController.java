@@ -179,7 +179,7 @@ public class DisponibilitaMediciController {
 
 	// crea disponibilità medico per id
 	@PostMapping
-	public DisponibilitaMedici createDisponibilitaByMedicoId(@RequestHeader("Authorization") String token,
+	public DisponibilitaMedici createDisponibilitaByMedicoId(@RequestHeader("Authorization") Token token,
 			@RequestParam Long medico_id, @RequestBody DisponibilitaMedici disponibilitaMedici) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
@@ -200,7 +200,7 @@ public class DisponibilitaMediciController {
 
 	// modifica disponibilita medico
 	@PutMapping("/{id}")
-	public DisponibilitaMedici updateDisponibilitaMedici(@RequestHeader("Authorization") String token,
+	public DisponibilitaMedici updateDisponibilitaMedici(@RequestHeader("Authorization") Token token,
 			@PathVariable Long id, @RequestBody DisponibilitaMedici disponibilitaMediciDett) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
@@ -216,7 +216,7 @@ public class DisponibilitaMediciController {
 
 	// disattiva disponibilita
 	@PutMapping("/disattivaDisponibilita/{id}")
-	public DisponibilitaMedici disattivaDisponibilitaMedici(@RequestHeader("Authorization") String token,
+	public DisponibilitaMedici disattivaDisponibilitaMedici(@RequestHeader("Authorization") Token token,
 			@PathVariable Long id) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
@@ -231,7 +231,7 @@ public class DisponibilitaMediciController {
 
 	// attiva disponibilita
 	@PutMapping("/attivaDisponibilita/{id}")
-	public DisponibilitaMedici attivaDisponibilitaMedici(@RequestHeader("Authorization") String token,
+	public DisponibilitaMedici attivaDisponibilitaMedici(@RequestHeader("Authorization") Token token,
 			@PathVariable Long id) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {

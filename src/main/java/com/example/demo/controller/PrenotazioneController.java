@@ -47,7 +47,7 @@ public class PrenotazioneController {
 
 	// stampa di tutte le prenotazioni
 	@GetMapping
-	public List<Prenotazione> getAllPrenotazioni(@RequestHeader("Authorization") String token) {
+	public List<Prenotazione> getAllPrenotazioni(@RequestHeader("Authorization") Token token) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
 			return prenotazioneRepository.findAll();
@@ -59,7 +59,7 @@ public class PrenotazioneController {
 	// stampa di tutte le prenotazioni attive
 
 	@GetMapping("/searchActiveAppointment")
-	public List<Prenotazione> getAllActivePrenotazioni(@RequestHeader("Authorization") String token) {
+	public List<Prenotazione> getAllActivePrenotazioni(@RequestHeader("Authorization") Token token) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
 			return prenotazioneRepository.findByActive(true);
@@ -71,7 +71,7 @@ public class PrenotazioneController {
 	// stampa di tutte le prenotazioni chiuse
 
 	@GetMapping("/searchNotActiveAppointment")
-	public List<Prenotazione> getAllNotActivePrenotazioni(@RequestHeader("Authorization") String token) {
+	public List<Prenotazione> getAllNotActivePrenotazioni(@RequestHeader("Authorization") Token token) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
 			return prenotazioneRepository.findByActive(false);
@@ -83,7 +83,7 @@ public class PrenotazioneController {
 	// stampa di una prenotazione per id
 
 	@GetMapping("/{id}")
-	public Prenotazione searchById(@RequestHeader("Authorization") String token, @PathVariable Long id) {
+	public Prenotazione searchById(@RequestHeader("Authorization") Token token, @PathVariable Long id) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
 			return prenotazioneRepository.findById(id)
@@ -96,7 +96,7 @@ public class PrenotazioneController {
 	// disattiva prenotazione
 
 	@PutMapping("/disattivaPrenotazione/{id}")
-	public Prenotazione disattivaPrenotazioneById(@RequestHeader("Authorization") String token, @PathVariable Long id) {
+	public Prenotazione disattivaPrenotazioneById(@RequestHeader("Authorization") Token token, @PathVariable Long id) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
 			Prenotazione prenotazione = prenotazioneRepository.findById(id)
@@ -111,7 +111,7 @@ public class PrenotazioneController {
 	// modifica penotazione tramite id
 
 	@PutMapping("/modifyAppointmentById/{id}")
-	public Prenotazione updateOraEDataPrenotazionebyId(@RequestHeader("Authorization") String token,
+	public Prenotazione updateOraEDataPrenotazionebyId(@RequestHeader("Authorization") Token token,
 			@PathVariable Long id, @RequestParam Long nuovaDispId) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
@@ -137,7 +137,7 @@ public class PrenotazioneController {
 	// creazione di una prenotazione
 
 	@PostMapping
-	public Prenotazione createPrenotazione(@RequestHeader("Authorization") String token,
+	public Prenotazione createPrenotazione(@RequestHeader("Authorization") Token token,
 			@RequestBody Prenotazione prenotazione) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
@@ -174,7 +174,7 @@ public class PrenotazioneController {
 
 	// elimina prenotazione
 	@DeleteMapping("/{id}")
-	public void deletePrenotazioneById(@RequestHeader("Authorization") String token, @PathVariable Long id) {
+	public void deletePrenotazioneById(@RequestHeader("Authorization") Token token, @PathVariable Long id) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
 			prenotazioneRepository.deleteById(id);
@@ -186,7 +186,7 @@ public class PrenotazioneController {
 	// elimina prenotazioni non attive
 	@Transactional
 	@DeleteMapping("/deleteByNotActiveAppointments")
-	public void deleteNotActivePrenotazioni(@RequestHeader("Authorization") String token) {
+	public void deleteNotActivePrenotazioni(@RequestHeader("Authorization") Token token) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null) {
 			prenotazioneRepository.deleteByNotActive();

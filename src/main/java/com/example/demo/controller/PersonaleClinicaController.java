@@ -41,7 +41,7 @@ public class PersonaleClinicaController {
 
 	// ricerca personale per id
 	@GetMapping("/{id}")
-	public PersonaleClinica getPersonaleClinicaById(@RequestHeader("Authorization") String token,
+	public PersonaleClinica getPersonaleClinicaById(@RequestHeader("Authorization") Token token,
 			@PathVariable Long id) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null && authToken.getRuolo().equals("admin")) {
@@ -54,7 +54,7 @@ public class PersonaleClinicaController {
 
 	// ricerca personale per mail
 	@GetMapping("/searchByEmail")
-	public PersonaleClinica getPersonaleClinicaByEmail(@RequestHeader("Authorization") String token,
+	public PersonaleClinica getPersonaleClinicaByEmail(@RequestHeader("Authorization") Token token,
 			@RequestParam String email) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null && authToken.getRuolo().equals("admin")) {
@@ -66,7 +66,7 @@ public class PersonaleClinicaController {
 
 	// ricerca di personale per ruolo
 	@GetMapping("/searchByRole")
-	public List<PersonaleClinica> getPersonaleClinicaByRole(@RequestHeader("Authorization") String token,
+	public List<PersonaleClinica> getPersonaleClinicaByRole(@RequestHeader("Authorization") Token token,
 			@RequestParam String role) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null && authToken.getRuolo().equals("admin")) {
@@ -78,7 +78,7 @@ public class PersonaleClinicaController {
 
 	// creazione personale clinica
 	@PostMapping
-	public PersonaleClinica createPersonaleClinica(@RequestHeader("Authorization") String token,
+	public PersonaleClinica createPersonaleClinica(@RequestHeader("Authorization") Token token,
 			@RequestBody PersonaleClinica personaleClinica) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null && authToken.getRuolo().equals("admin")) {
@@ -90,7 +90,7 @@ public class PersonaleClinicaController {
 
 	// eliminazione personale clinica
 	@DeleteMapping("/{id}")
-	public void deletePersonaleClinica(@RequestHeader("Authorization") String token, @PathVariable Long id) {
+	public void deletePersonaleClinica(@RequestHeader("Authorization") Token token, @PathVariable Long id) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null && authToken.getRuolo().equals("admin")) {
 			personaleClinicaRepository.deleteById(id);
@@ -101,7 +101,7 @@ public class PersonaleClinicaController {
 
 	// modifica personale clinica
 	@PutMapping("/{id}")
-	public PersonaleClinica updatePersonaleClinica(@RequestHeader("Authorization") String token, @PathVariable Long id,
+	public PersonaleClinica updatePersonaleClinica(@RequestHeader("Authorization") Token token, @PathVariable Long id,
 			@RequestBody PersonaleClinica personaleClinicaDett) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null && authToken.getRuolo().equals("admin")) {

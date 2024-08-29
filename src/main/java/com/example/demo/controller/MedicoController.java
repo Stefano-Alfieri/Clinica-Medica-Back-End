@@ -77,7 +77,7 @@ public class MedicoController {
 
 	// creazione di un medico
 	@PostMapping
-	public Medico createMedico(@RequestHeader("Authorization") String token, @RequestBody Medico medico) {
+	public Medico createMedico(@RequestHeader("Authorization") Token token, @RequestBody Medico medico) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null && authToken.getRuolo().equals("admin")) {
 			return medicoRepository.save(medico);
@@ -88,7 +88,7 @@ public class MedicoController {
 
 	// eliminazione di un medico
 	@DeleteMapping("/{id}")
-	public void deleteMedico(@RequestHeader("Authorization") String token, @PathVariable Long id) {
+	public void deleteMedico(@RequestHeader("Authorization") Token token, @PathVariable Long id) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null && authToken.getRuolo().equals("admin")) {
 			medicoRepository.deleteById(id);
@@ -99,7 +99,7 @@ public class MedicoController {
 
 	// modifica di un medico
 	@PutMapping("/{id}")
-	public Medico updateMedico(@RequestHeader("Authorization") String token, @PathVariable Long id,
+	public Medico updateMedico(@RequestHeader("Authorization") Token token, @PathVariable Long id,
 			@RequestBody Medico medicoDett) {
 		Token authToken = tokenService.findByToken(token);
 		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
