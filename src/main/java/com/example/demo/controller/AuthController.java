@@ -68,9 +68,9 @@ public class AuthController {
 		tokenService.deleteByToken(token);
 	}
 
-	/*@GetMapping("/SearchRuoloByToken")
+	@GetMapping("/SearchRuoloByToken")
 	public String getRuolo(@RequestParam String token) {
 		return tokenService.getRuoloByToken(token);
 	}
-*/	
+	
 }

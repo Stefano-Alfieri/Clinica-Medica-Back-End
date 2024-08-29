@@ -56,8 +56,8 @@ public class TokenService {
 		tokenRepository.deleteByToken(token);
 	}
 	
-/*	public String getRuoloByToken(String token) {
+	public String getRuoloByToken(String token) {
 		return tokenRepository.findRuoloByToken(token).get(0);
 	}
-	*/
+	
 }

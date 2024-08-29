@@ -17,8 +17,8 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
 	@Modifying
 	@Query("DELETE FROM Token t WHERE t.token = :token")
 	void deleteByToken(@Param("token") String token);
-/*	
-	@Query("SELECT t.ruolo FROM Token t WHERE t.token = ?")
-	List<String> findRuoloByToken( String token);
-	*/
+		
+	@Query("SELECT t.ruolo FROM Token t WHERE t.token = :token")
+	List<String> findRuoloByToken(@Param("token") String token);
+	
 	}
