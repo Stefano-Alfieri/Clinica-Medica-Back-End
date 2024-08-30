@@ -78,4 +78,9 @@ public class AuthController {
 		return tokenService.getAdminIdByToken(token);
 	}
 	
+	@GetMapping("/searchPazienteByToken")
+	public long getPazienteIdByToken(@RequestParam String token) {
+		return tokenService.getPazienteIdByToken(token);
+	}
+	
 }

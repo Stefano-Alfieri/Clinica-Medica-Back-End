@@ -63,4 +63,8 @@ public class TokenService {
 		return tokenRepository.findPersonaleClinicaByToken(token);
 	}
 	
+	public long getPazienteIdByToken(String token) {
+		return tokenRepository.findPazienteIdByToken(token);
+	}
+	
 }
