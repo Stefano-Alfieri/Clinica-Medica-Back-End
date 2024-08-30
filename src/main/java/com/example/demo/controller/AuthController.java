@@ -73,4 +73,9 @@ public class AuthController {
 		return tokenService.getRuoloByToken(token);
 	}
 	
+	@GetMapping("/searchAdminByToken")
+	public long getAdmin(@RequestParam String token) {
+		return tokenService.getAdminIdByToken(token);
+	}
+	
 }

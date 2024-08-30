@@ -101,13 +101,13 @@ public class PazienteController {
 
 	// creazione di un paziente
 	@PostMapping
-	public Paziente createPaziente(@RequestHeader("Authorization") Token token, @RequestBody Paziente paziente) {
-		Token authToken = tokenService.findByToken(token);
-		if (authToken != null) {
+	public Paziente createPaziente( @RequestBody Paziente paziente) {
 			return pazienteRepository.save(paziente);
-		} else {
-			throw new UnauthorizedException();
 		}
+	//stampa del numero degli elementi in una tabella
+	@GetMapping("/number")
+	public long getNumPaz() {
+		return pazienteRepository.count();
 	}
 
 	// eliminazione di un paziente

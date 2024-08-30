@@ -38,6 +38,13 @@ public class MedicoController {
 	public List<Medico> getAllMedici() {
 		return medicoRepository.findAll();
 	}
+	
+	//stampa del numero degli elementi in una tabella
+	@GetMapping("/number")
+	public long getNumMed() {
+		return medicoRepository.count();
+	}
+
 
 	// ricerca di un medico per id
 	@GetMapping("/{id}")

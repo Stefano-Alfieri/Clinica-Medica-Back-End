@@ -57,7 +57,10 @@ public class TokenService {
 	}
 	
 	public String getRuoloByToken(String token) {
-		return tokenRepository.findRuoloByToken(token).get(0);
+		return tokenRepository.findRuoloByToken(token);
+	}
+	public long getAdminIdByToken(String token) {
+		return tokenRepository.findPersonaleClinicaByToken(token);
 	}
 	
 }

@@ -38,19 +38,21 @@ public class PersonaleClinicaController {
 	public List<PersonaleClinica> getAllPersonaleClinica() {
 		return personaleClinicaRepository.findAll();
 	}
+	
+	//stampa del numero degli elementi in una tabella
+	@GetMapping("/number")
+	public long getNumPers() {
+		return personaleClinicaRepository.count();
+	}
+
 
 	// ricerca personale per id
 	@GetMapping("/{id}")
-	public PersonaleClinica getPersonaleClinicaById(@RequestHeader("Authorization") Token token,
-			@PathVariable Long id) {
-		Token authToken = tokenService.findByToken(token);
-		if (authToken != null && authToken.getRuolo().equals("admin")) {
+	public PersonaleClinica getPersonaleClinicaById(@PathVariable Long id) {
 			return personaleClinicaRepository.findById(id)
 					.orElseThrow(() -> new ResourceNotFoundException("id non trovato"));
-		} else {
-			throw new UnauthorizedException();
-		}
-	}
+		} 
+	
 
 	// ricerca personale per mail
 	@GetMapping("/searchByEmail")
