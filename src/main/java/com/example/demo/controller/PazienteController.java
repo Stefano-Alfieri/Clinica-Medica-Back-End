@@ -33,14 +33,10 @@ public class PazienteController {
 
 	// stampa di tutti i pazienti
 	@GetMapping
-	public List<Paziente> getAllPazienti(@RequestHeader("Authorization") Token token) {
-		Token authToken = tokenService.findByToken(token);
-		if (authToken != null && authToken.getRuolo().equals("admin") || authToken.getRuolo().equals("medico")) {
+	public List<Paziente> getAllPazienti() {
 			return pazienteRepository.findAll();
-		} else {
-			throw new UnauthorizedException();
-		}
-	}
+		} 
+	
 
 	// ricerca di un paziente per id
 	@GetMapping("/{id}")

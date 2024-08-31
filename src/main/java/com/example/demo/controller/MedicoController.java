@@ -84,13 +84,10 @@ public class MedicoController {
 
 	// creazione di un medico
 	@PostMapping
-	public Medico createMedico(@RequestHeader("Authorization") Token token, @RequestBody Medico medico) {
-		Token authToken = tokenService.findByToken(token);
-		if (authToken != null && authToken.getRuolo().equals("admin")) {
+	public Medico createMedico(@RequestBody Medico medico) {
+		
 			return medicoRepository.save(medico);
-		} else {
-			throw new UnauthorizedException();
-		}
+		
 	}
 
 	// eliminazione di un medico
