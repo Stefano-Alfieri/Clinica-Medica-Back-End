@@ -26,4 +26,10 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
 	
 	@Query("SELECT t.pazienteId FROM Token t WHERE t.token = :token")
 	long findPazienteIdByToken(@Param("token") String token);
-	}
+	
+	@Query("SELECT t.medicoId FROM Token t WHERE t.token = :token")
+	long findDottoreIdByToken(@Param("token") String token);
+	
+	} 
+
+

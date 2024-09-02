@@ -80,26 +80,18 @@ public class PersonaleClinicaController {
 
 	// creazione personale clinica
 	@PostMapping
-	public PersonaleClinica createPersonaleClinica(@RequestHeader("Authorization") Token token,
+	public PersonaleClinica createPersonaleClinica(
 			@RequestBody PersonaleClinica personaleClinica) {
-		Token authToken = tokenService.findByToken(token);
-		if (authToken != null && authToken.getRuolo().equals("admin")) {
+		
 			return personaleClinicaRepository.save(personaleClinica);
-		} else {
-			throw new UnauthorizedException();
-		}
-	}
+		} 
 
 	// eliminazione personale clinica
 	@DeleteMapping("/{id}")
-	public void deletePersonaleClinica(@RequestHeader("Authorization") Token token, @PathVariable Long id) {
-		Token authToken = tokenService.findByToken(token);
-		if (authToken != null && authToken.getRuolo().equals("admin")) {
+	public void deletePersonaleClinica( @PathVariable Long id) {
+		
 			personaleClinicaRepository.deleteById(id);
-		} else {
-			throw new UnauthorizedException();
 		}
-	}
 
 	// modifica personale clinica
 	@PutMapping("/{id}")

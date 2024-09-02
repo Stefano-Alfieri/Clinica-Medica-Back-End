@@ -80,6 +80,12 @@ public class AuthController {
 	
 	@GetMapping("/searchPazienteByToken")
 	public long getPazienteIdByToken(@RequestParam String token) {
+		System.out.println("paziente");
+		return tokenService.getPazienteIdByToken(token);
+	}
+	
+	@GetMapping("/searchDoctorByToken")
+	public long getDottoreIdByToken(@RequestParam String token) {
 		return tokenService.getPazienteIdByToken(token);
 	}
 	

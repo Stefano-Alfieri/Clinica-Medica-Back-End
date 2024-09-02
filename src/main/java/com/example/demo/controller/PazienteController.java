@@ -108,14 +108,10 @@ public class PazienteController {
 
 	// eliminazione di un paziente
 	@DeleteMapping("/{id}")
-	public void deletePaziente(@RequestHeader("Authorization") Token token, @PathVariable Long id) {
-		Token authToken = tokenService.findByToken(token);
-		if (authToken != null) {
+	public void deletePaziente( @PathVariable Long id) {
+		
 			pazienteRepository.deleteById(id);
-		} else {
-			throw new UnauthorizedException();
-		}
-	}
+		} 
 
 	// modifica di un paziente
 	@PutMapping("/{id}")

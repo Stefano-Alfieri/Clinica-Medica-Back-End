@@ -67,4 +67,8 @@ public class TokenService {
 		return tokenRepository.findPazienteIdByToken(token);
 	}
 	
+	public long getDottoreIdByToken(String token) {
+		return tokenRepository.findDottoreIdByToken(token);
+	}
+	
 }

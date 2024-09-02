@@ -92,13 +92,10 @@ public class MedicoController {
 
 	// eliminazione di un medico
 	@DeleteMapping("/{id}")
-	public void deleteMedico(@RequestHeader("Authorization") Token token, @PathVariable Long id) {
-		Token authToken = tokenService.findByToken(token);
-		if (authToken != null && authToken.getRuolo().equals("admin")) {
+	public void deleteMedico(@PathVariable Long id) {
+		
 			medicoRepository.deleteById(id);
-		} else {
-			throw new UnauthorizedException();
-		}
+		
 	}
 
 	// modifica di un medico

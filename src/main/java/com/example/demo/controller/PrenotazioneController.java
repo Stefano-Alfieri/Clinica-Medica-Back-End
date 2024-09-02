@@ -19,10 +19,12 @@ import com.example.demo.exception.OggettoGiaPresenteException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.exception.UnauthorizedException;
 import com.example.demo.model.DisponibilitaMedici;
+import com.example.demo.model.Medico;
 import com.example.demo.model.Paziente;
 import com.example.demo.model.Prenotazione;
 import com.example.demo.model.Token;
 import com.example.demo.repository.DisponibilitaMediciRepository;
+import com.example.demo.repository.MedicoRepository;
 import com.example.demo.repository.PazienteRepository;
 import com.example.demo.repository.PrenotazioneRepository;
 import com.example.demo.service.TokenService;
@@ -47,14 +49,10 @@ public class PrenotazioneController {
 
 	// stampa di tutte le prenotazioni
 	@GetMapping
-	public List<Prenotazione> getAllPrenotazioni(@RequestHeader("Authorization") Token token) {
-		Token authToken = tokenService.findByToken(token);
-		if (authToken != null) {
+	public List<Prenotazione> getAllPrenotazioni() {
+		
 			return prenotazioneRepository.findAll();
-		} else {
-			throw new UnauthorizedException();
-		}
-	}
+		} 
 
 	// stampa di tutte le prenotazioni attive
 
@@ -137,11 +135,9 @@ public class PrenotazioneController {
 	// creazione di una prenotazione
 
 	@PostMapping
-	public Prenotazione createPrenotazione(@RequestHeader("Authorization") Token token,
-			@RequestBody Prenotazione prenotazione) {
-		Token authToken = tokenService.findByToken(token);
-		if (authToken != null) {
+	public Prenotazione createPrenotazione(@RequestBody Prenotazione prenotazione) {
 			// controllo se la disponibilità sia nulla
+		System.out.println(prenotazione.getPaziente());
 			if (disponibilitaMediciRepository.findById(prenotazione.getDisponibilita().getId()) == null) {
 				throw new OggettoGiaPresenteException("Disponibilità non fornita");
 			} else {
@@ -167,21 +163,17 @@ public class PrenotazioneController {
 					return prenotazioneRepository.save(pren);
 				}
 			}
-		} else {
-			throw new UnauthorizedException();
-		}
-	}
+		} 
 
 	// elimina prenotazione
 	@DeleteMapping("/{id}")
-	public void deletePrenotazioneById(@RequestHeader("Authorization") Token token, @PathVariable Long id) {
-		Token authToken = tokenService.findByToken(token);
-		if (authToken != null) {
+	public void deletePrenotazioneById(@PathVariable Long id) {
+			Prenotazione prenotazione = prenotazioneRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("id disponibilità non trovato"));
+			DisponibilitaMedici disp = disponibilitaMediciRepository.findById(prenotazione.getDisponibilita().getId()).orElseThrow(() -> new ResourceNotFoundException("id disponibilità non trovato"));
+			disp.setStatus(true);
+			disponibilitaMediciRepository.save(disp);
 			prenotazioneRepository.deleteById(id);
-		} else {
-			throw new UnauthorizedException();
-		}
-	}
+		} 
 
 	// elimina prenotazioni non attive
 	@Transactional
