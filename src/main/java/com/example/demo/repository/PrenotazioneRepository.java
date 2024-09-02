@@ -16,4 +16,5 @@ public interface PrenotazioneRepository extends JpaRepository<Prenotazione, Long
 	@Query("DELETE FROM Prenotazione p WHERE p.active = false")
 	void deleteByNotActive();
 	
+	List<Prenotazione> findByPaziente_Id(Long paziente_Id);
 }

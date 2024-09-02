@@ -57,14 +57,10 @@ public class PrenotazioneController {
 	// stampa di tutte le prenotazioni attive
 
 	@GetMapping("/searchActiveAppointment")
-	public List<Prenotazione> getAllActivePrenotazioni(@RequestHeader("Authorization") Token token) {
-		Token authToken = tokenService.findByToken(token);
-		if (authToken != null) {
+	public List<Prenotazione> getAllActivePrenotazioni() {
+	
 			return prenotazioneRepository.findByActive(true);
-		} else {
-			throw new UnauthorizedException();
-		}
-	}
+		} 
 
 	// stampa di tutte le prenotazioni chiuse
 
@@ -91,6 +87,11 @@ public class PrenotazioneController {
 		}
 	}
 
+	@GetMapping("/searchByPazienteId/{id}")
+	public List<Prenotazione> searchByPazienteId(@PathVariable Long id) {
+		return prenotazioneRepository.findByPaziente_Id(id);
+	}
+	
 	// disattiva prenotazione
 
 	@PutMapping("/disattivaPrenotazione/{id}")
